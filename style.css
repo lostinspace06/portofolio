@@ -1,0 +1,198 @@
+html, body {
+  margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
+  background: black;
+  font-family: 'Courier New', monospace;
+}
+#bg-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  z-index: 1;
+  transform: scale(1.1);
+}
+#model-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2;
+  opacity: 0;
+  transform: translateY(50px);
+}
+#loading-screen {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: #000;
+  display: flex; 
+  justify-content: flex-start; 
+  align-items: flex-start;
+  padding: 20px;
+  color: #00ff00;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  user-select: none;
+  z-index: 100;
+  overflow-y: auto;
+}
+#terminal-output {
+  width: 100%;
+  white-space: pre-wrap;
+  line-height: 1.4;
+}
+.loading-line {
+  margin: 2px 0;
+  opacity: 0;
+}
+.ok {
+  color: #00ff00;
+}
+.progress-bar {
+  color: #00ff00;
+}
+
+/* Glitch effect for transition */
+.glitch-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 255, 0, 0.03) 2px,
+    rgba(0, 255, 0, 0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 99;
+  opacity: 0;
+}
+
+/* Time Display */
+#time-display {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  color: #00ff00;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  z-index: 30;
+  background: rgba(0, 20, 0, 0.7);
+  padding: 8px 12px;
+  border: 1px solid #00ff00;
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+}
+
+/* Music Toggle */
+#music-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(0, 20, 0, 0.9);
+  border: 1px solid #00ff00;
+  color: #00ff00;
+  padding: 10px 15px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 5px;
+  z-index: 30;
+  transition: all 0.3s ease;
+}
+
+#music-toggle:hover {
+  background: #00ff00;
+  color: #000;
+  box-shadow: 0 0 15px #00ff00;
+}
+
+#music-toggle.music-on {
+  background: #00ff00;
+  color: #000;
+  box-shadow: 0 0 15px #00ff00;
+}
+
+/* Portal Messages - Linux Style */
+.portal-messages {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #00ff00;
+  font-size: 13px;
+  font-family: 'Courier New', monospace;
+  text-align: left;
+  opacity: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.9);
+  padding: 30px;
+  border: 1px solid #00ff00;
+  border-radius: 4px;
+  line-height: 1.6;
+  min-width: 500px;
+  box-shadow: 0 0 30px rgba(0, 255, 0, 0.4);
+}
+
+.portal-line {
+  margin: 8px 0;
+  opacity: 0;
+  color: #00ff00;
+}
+
+.portal-ok {
+  color: #00ff00;
+}
+
+.portal-warning {
+  color: #ffaa00;
+}
+
+.portal-error {
+  color: #ff4444;
+}
+
+.portal-success {
+  color: #00ff00;
+}
+
+/* Portal Overlay */
+.portal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(0, 255, 0, 0.1) 0%, transparent 70%);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 999;
+}
+
+/* Particle Effects */
+.particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+/* Exit Dialog Styles */
+#exit-dialog button:hover {
+  background: #00ff00 !important;
+  color: #000 !important;
+  box-shadow: 0 0 15px #00ff00;
+}
+
+#exit-dialog {
+  animation: dialog-pulse 2s infinite;
+}
+
+@keyframes dialog-pulse {
+  0%, 100% { border-color: #00ff00; }
+  50% { border-color: #ff00ff; }
+}

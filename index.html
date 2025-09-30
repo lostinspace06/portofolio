@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cyberpunk Gateway</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Glitch overlay for transition effect -->
+  <div class="glitch-overlay" id="glitch-overlay"></div>
+
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <div id="terminal-output"></div>
+  </div>
+
+  <!-- Time Display -->
+  <div id="time-display"></div>
+
+  <!-- Music Toggle -->
+  <button id="music-toggle">MUSIC: OFF</button>
+
+  <!-- Audio Elements -->
+  <audio id="bg-music" loop>
+    <source src="assets/cyberpunk-ambient.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="click-sound" src="assets/click.wav"></audio>
+
+  <video id="bg-video" autoplay loop muted playsinline>
+    <source src="assets/anime.mp4" type="video/mp4" />
+  </video>
+
+  <div id="model-container"></div>
+
+  <!-- GSAP CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.150.1/examples/jsm/"
+      }
+    }
+  </script>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
