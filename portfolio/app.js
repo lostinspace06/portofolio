@@ -1,555 +1,637 @@
-// Portfolio Navigation with AWESOME Features (No Cityscape)
-class CyberPortfolio {
+import * as THREE from 'three';
+
+// Make it globally accessible
+window.portfolio = null;
+
+class CyberCubePortfolio {
   constructor() {
-    this.currentSection = 'home';
-    this.miningActive = false;
-    this.miningInterval = null;
-    this.hashRate = 0;
-    this.blocksMined = 0;
-    this.projectsFound = 0;
-    this.totalProjects = 3;
+    this.currentFace = 'name';
+    this.currentRotation = 0;
+    this.isRotating = false;
+    this.mainCube = document.getElementById('main-cube');
+    this.mouse3D = new THREE.Vector3();
+    this.ripples = [];
+    this.trailPoints = [];
+    
     this.init();
   }
 
   init() {
+    this.setupCustomCursor();
+    this.setupCursorTrail();
+    this.setupMatrixBackground();
+    this.setupNeuralNetwork();
     this.setupNavigation();
-    this.setupAnimations();
-    this.setupMatrixRain();
-    this.animateSkillBars();
-    this.setupNeonSign();
-    this.setupGitHubStream();
-    this.setupMiningSimulator();
+    this.setupTouchControls();
+    this.setupHoverEffects();
+    this.setupHeaderNavigation();
   }
 
-  setupNavigation() {
-    const navButtons = document.querySelectorAll('.nav-options button');
+  setupCustomCursor() {
+    const cursor = document.querySelector('.cursor');
+    const cursorFollower = document.querySelector('.cursor-follower');
+
+    document.addEventListener('mousemove', (e) => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+      cursorFollower.style.left = e.clientX + 'px';
+      cursorFollower.style.top = e.clientY + 'px';
+    });
+
+    const interactiveElements = document.querySelectorAll('.cube-face, .project-card, .skill-item, .contact-link, .project-btn, .nav-arrow, .nav-link');
     
-    navButtons.forEach(button => {
-      button.addEventListener('click', (e) => {
-        const targetSection = e.target.dataset.section;
-        this.navigateTo(targetSection);
-        this.playSound('click');
+    interactiveElements.forEach(element => {
+      element.addEventListener('mouseenter', () => {
+        cursor.style.transform = 'scale(1.5)';
+        cursor.style.borderColor = '#00ffff';
       });
-    });
-
-    this.showSection('home');
-  }
-
-  navigateTo(section) {
-    this.hideCurrentSection();
-    this.showSection(section);
-    this.currentSection = section;
-  }
-
-  hideCurrentSection() {
-    const currentActive = document.querySelector('.section.active');
-    if (currentActive) {
-      currentActive.classList.remove('active');
-    }
-  }
-
-  showSection(section) {
-    const targetSection = document.getElementById(section);
-    if (targetSection) {
-      targetSection.classList.add('active');
       
-      gsap.fromTo(targetSection, 
-        { opacity: 0, y: 50 },
-        { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }
-      );
-    }
-  }
-
-  setupAnimations() {
-    // Avatar glitch effect
-    const avatar = document.querySelector('.avatar-glitch');
-    setInterval(() => {
-      gsap.to(avatar, {
-        scale: 1.05,
-        duration: 0.1,
-        yoyo: true,
-        repeat: 1,
-        ease: "power2.inOut"
+      element.addEventListener('mouseleave', () => {
+        cursor.style.transform = 'scale(1)';
+        cursor.style.borderColor = '#00ff41';
       });
-    }, 3000);
-
-    // Hologram pulse effect
-    const holograms = document.querySelectorAll('.hologram-icon');
-    holograms.forEach(hologram => {
-      setInterval(() => {
-        gsap.to(hologram, {
-          scale: 1.1,
-          duration: 0.5,
-          yoyo: true,
-          ease: "power2.inOut"
-        });
-      }, 2000);
     });
   }
 
-  animateSkillBars() {
-    const skillLevels = document.querySelectorAll('.skill-level');
-    
-    skillLevels.forEach(level => {
-      const targetWidth = level.dataset.level + '%';
-      
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            gsap.to(level, {
-              width: targetWidth,
-              duration: 1.5,
-              ease: "power3.out",
-              delay: Math.random() * 0.5
-            });
-            observer.unobserve(level);
-          }
-        });
-      });
-
-      observer.observe(level);
-    });
-  }
-
-  setupMatrixRain() {
-    const canvas = document.createElement('canvas');
+  setupCursorTrail() {
+    const canvas = document.getElementById('cursor-trail');
     const ctx = canvas.getContext('2d');
-    const matrixContainer = document.querySelector('.matrix-rain');
-    
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    matrixContainer.appendChild(canvas);
 
-    const chars = "01010101010101010101";
-    const fontSize = 14;
-    const columns = canvas.width / fontSize;
-    const drops = [];
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
 
-    for(let i = 0; i < columns; i++) {
-      drops[i] = 1;
-    }
+    document.addEventListener('mousemove', (e) => {
+      this.trailPoints.push({
+        x: e.clientX,
+        y: e.clientY,
+        life: 1
+      });
 
-    function draw() {
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.04)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      
-      ctx.fillStyle = '#00ff00';
-      ctx.font = fontSize + 'px monospace';
-
-      for(let i = 0; i < drops.length; i++) {
-        const text = chars[Math.floor(Math.random() * chars.length)];
-        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-        
-        if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-          drops[i] = 0;
-        }
-        drops[i]++;
+      if (this.trailPoints.length > 20) {
+        this.trailPoints.shift();
       }
-    }
+    });
 
-    setInterval(draw, 35);
+    const animateTrail = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = 0; i < this.trailPoints.length; i++) {
+        const point = this.trailPoints[i];
+        const size = 3 * point.life;
+        
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(0, 255, 65, ${point.life * 0.5})`;
+        ctx.fill();
+
+        point.life -= 0.05;
+        if (point.life <= 0) {
+          this.trailPoints.splice(i, 1);
+          i--;
+        }
+      }
+
+      requestAnimationFrame(animateTrail);
+    };
+
+    animateTrail();
   }
 
-  /* 💡 NEON SIGN GENERATOR */
-  setupNeonSign() {
-    const neonInput = document.getElementById('neon-input');
-    const neonSign = document.getElementById('neon-sign');
+  setupMatrixBackground() {
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     
-    // Load saved name
-    const savedName = localStorage.getItem('neonName');
-    if (savedName) {
-      neonSign.textContent = savedName;
-      neonInput.value = savedName;
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0x000000, 0);
+    document.getElementById('matrix-bg').appendChild(renderer.domElement);
+
+    // Particle system
+    const particleCount = 1500;
+    const positions = new Float32Array(particleCount * 3);
+    const velocities = [];
+    const originalPositions = new Float32Array(particleCount * 3);
+
+    for (let i = 0; i < particleCount; i++) {
+      const i3 = i * 3;
+      const radius = Math.random() * 100 + 50;
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(Math.random() * 2 - 1);
+
+      positions[i3] = radius * Math.sin(phi) * Math.cos(theta);
+      positions[i3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+      positions[i3 + 2] = radius * Math.cos(phi);
+
+      originalPositions[i3] = positions[i3];
+      originalPositions[i3 + 1] = positions[i3 + 1];
+      originalPositions[i3 + 2] = positions[i3 + 2];
+
+      velocities.push({ x: 0, y: 0, z: 0 });
     }
-    
-    neonInput.addEventListener('input', (e) => {
-      const text = e.target.value.toUpperCase();
-      neonSign.textContent = text || 'YOUR_NAME';
-      localStorage.setItem('neonName', text);
+
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+    const material = new THREE.PointsMaterial({
+      size: 2,
+      color: 0x00ff41,
+      transparent: true,
+      opacity: 0.6
+    });
+
+    const particleSystem = new THREE.Points(geometry, material);
+    scene.add(particleSystem);
+
+    camera.position.z = 50;
+
+    // Mouse tracking
+    document.addEventListener('mousemove', (e) => {
+      const x = (e.clientX / window.innerWidth) * 2 - 1;
+      const y = -(e.clientY / window.innerHeight) * 2 + 1;
+      this.mouse3D.set(x * 50, y * 50, 0);
+    });
+
+    // Click ripples
+    document.addEventListener('click', (e) => {
+      const x = (e.clientX / window.innerWidth) * 2 - 1;
+      const y = -(e.clientY / window.innerHeight) * 2 + 1;
       
-      // Add glow effect
-      gsap.to(neonSign, {
-        scale: 1.1,
-        duration: 0.2,
-        yoyo: true,
-        repeat: 1,
-        ease: "power2.inOut"
+      this.ripples.push({
+        position: new THREE.Vector3(x * 50, y * 50, 0),
+        radius: 0,
+        maxRadius: 80
       });
     });
-    
-    // Random color flicker occasionally
-    setInterval(() => {
-      if (Math.random() > 0.7) {
-        gsap.to(neonSign, {
-          color: '#ff00ff',
-          duration: 0.1,
-          yoyo: true,
-          repeat: 1,
-          ease: "power2.inOut"
-        });
+
+    // Animation
+    const animate = () => {
+      requestAnimationFrame(animate);
+      const positions = particleSystem.geometry.attributes.position.array;
+
+      for (let i = 0; i < particleCount; i++) {
+        const i3 = i * 3;
+        const particlePos = new THREE.Vector3(positions[i3], positions[i3 + 1], positions[i3 + 2]);
+        
+        // Mouse repulsion
+        const distToMouse = particlePos.distanceTo(this.mouse3D);
+        if (distToMouse < 30) {
+          const force = (30 - distToMouse) / 30;
+          const direction = new THREE.Vector3().subVectors(particlePos, this.mouse3D).normalize();
+          velocities[i].x += direction.x * force * 0.5;
+          velocities[i].y += direction.y * force * 0.5;
+          velocities[i].z += direction.z * force * 0.5;
+        }
+
+        // Ripple effects
+        for (let j = 0; j < this.ripples.length; j++) {
+          const ripple = this.ripples[j];
+          const distToRipple = particlePos.distanceTo(ripple.position);
+          const rippleEdge = Math.abs(distToRipple - ripple.radius);
+          
+          if (rippleEdge < 5) {
+            const force = (5 - rippleEdge) / 5 * 20;
+            const direction = new THREE.Vector3().subVectors(particlePos, ripple.position).normalize();
+            velocities[i].x += direction.x * force * 0.1;
+            velocities[i].y += direction.y * force * 0.1;
+            velocities[i].z += direction.z * force * 0.1;
+          }
+        }
+
+        // Apply velocities
+        positions[i3] += velocities[i].x;
+        positions[i3 + 1] += velocities[i].y;
+        positions[i3 + 2] += velocities[i].z;
+
+        // Return to original position
+        velocities[i].x += (originalPositions[i3] - positions[i3]) * 0.01;
+        velocities[i].y += (originalPositions[i3 + 1] - positions[i3 + 1]) * 0.01;
+        velocities[i].z += (originalPositions[i3 + 2] - positions[i3 + 2]) * 0.01;
+
+        // Friction
+        velocities[i].x *= 0.95;
+        velocities[i].y *= 0.95;
+        velocities[i].z *= 0.95;
       }
-    }, 3000);
+
+      // Update ripples
+      for (let i = this.ripples.length - 1; i >= 0; i--) {
+        this.ripples[i].radius += 2;
+        if (this.ripples[i].radius >= this.ripples[i].maxRadius) {
+          this.ripples.splice(i, 1);
+        }
+      }
+
+      particleSystem.geometry.attributes.position.needsUpdate = true;
+      particleSystem.rotation.y += 0.001;
+      renderer.render(scene, camera);
+    };
+
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
   }
 
-  /* 📊 GITHUB ACTIVITY STREAM */
-  async setupGitHubStream() {
-    await this.fetchGitHubStats();
-    this.createGitHubStream();
-    this.simulateActivityFeed();
-  }
-
-  async fetchGitHubStats() {
-    // Replace with your GitHub username
-    const username = 'your-github-username';
+  setupNeuralNetwork() {
+    const canvas = document.querySelector('.neural-network-bg');
+    if (!canvas) return;
     
-    try {
-      const response = await fetch(`https://api.github.com/users/${username}`);
-      const data = await response.json();
-      
-      document.getElementById('repo-count').textContent = data.public_repos || '42';
-      document.getElementById('star-count').textContent = Math.floor(data.public_repos * 2.5) || '105';
-      document.getElementById('commit-count').textContent = Math.floor(data.public_repos * 15) || '630';
-      
-    } catch (error) {
-      // Fallback numbers if API fails
-      document.getElementById('repo-count').textContent = '42';
-      document.getElementById('commit-count').textContent = '630';
-      document.getElementById('star-count').textContent = '105';
-    }
-  }
-
-  createGitHubStream() {
-    const canvas = document.getElementById('github-stream');
     const ctx = canvas.getContext('2d');
+    const parent = canvas.parentElement;
     
-    canvas.width = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
-    
-    const points = [];
-    const pointCount = 50;
-    
-    for (let i = 0; i < pointCount; i++) {
-      points.push({
+    canvas.width = parent.offsetWidth;
+    canvas.height = parent.offsetHeight;
+
+    const nodes = [];
+    for (let i = 0; i < 20; i++) {
+      nodes.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        speed: Math.random() * 2 + 1,
-        size: Math.random() * 2 + 1
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        radius: 3,
+        active: false,
+        pulsePhase: Math.random() * Math.PI * 2
       });
     }
-    
-    function animate() {
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      
-      points.forEach(point => {
-        point.y += point.speed;
-        if (point.y > canvas.height) {
-          point.y = 0;
-          point.x = Math.random() * canvas.width;
+
+    const connections = [];
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const dx = nodes[i].x - nodes[j].x;
+        const dy = nodes[i].y - nodes[j].y;
+        if (Math.sqrt(dx * dx + dy * dy) < 120) {
+          connections.push({ from: i, to: j, flow: Math.random() });
         }
-        
-        ctx.fillStyle = '#00ff00';
-        ctx.beginPath();
-        ctx.arc(point.x, point.y, point.size, 0, Math.PI * 2);
-        ctx.fill();
-        
-        // Draw connection lines
-        points.forEach(otherPoint => {
-          const distance = Math.sqrt(
-            Math.pow(point.x - otherPoint.x, 2) + 
-            Math.pow(point.y - otherPoint.y, 2)
-          );
-          
-          if (distance < 100) {
-            ctx.strokeStyle = `rgba(0, 255, 0, ${0.2 * (1 - distance/100)})`;
-            ctx.lineWidth = 0.5;
-            ctx.beginPath();
-            ctx.moveTo(point.x, point.y);
-            ctx.lineTo(otherPoint.x, otherPoint.y);
-            ctx.stroke();
-          }
-        });
-      });
-      
-      requestAnimationFrame(animate);
+      }
     }
-    
+
+    let sequenceIndex = 0;
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Sequential activation
+      if (Date.now() % 200 < 16) {
+        nodes.forEach(n => n.active = false);
+        nodes[sequenceIndex % nodes.length].active = true;
+        sequenceIndex++;
+      }
+
+      // Draw connections
+      connections.forEach(conn => {
+        const from = nodes[conn.from];
+        const to = nodes[conn.to];
+
+        ctx.beginPath();
+        ctx.moveTo(from.x, from.y);
+        ctx.lineTo(to.x, to.y);
+        ctx.strokeStyle = 'rgba(0, 255, 65, 0.15)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        // Flow packet
+        conn.flow += 0.01;
+        if (conn.flow > 1) conn.flow = 0;
+        
+        const flowX = from.x + (to.x - from.x) * conn.flow;
+        const flowY = from.y + (to.y - from.y) * conn.flow;
+        
+        ctx.beginPath();
+        ctx.arc(flowX, flowY, 2, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(0, 255, 65, 0.8)';
+        ctx.fill();
+      });
+
+      // Draw nodes
+      nodes.forEach(node => {
+        node.x += node.vx;
+        node.y += node.vy;
+        if (node.x < 0 || node.x > canvas.width) node.vx *= -1;
+        if (node.y < 0 || node.y > canvas.height) node.vy *= -1;
+        node.x = Math.max(0, Math.min(canvas.width, node.x));
+        node.y = Math.max(0, Math.min(canvas.height, node.y));
+
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+        ctx.fillStyle = node.active ? 'rgba(0, 255, 65, 1)' : 'rgba(0, 255, 65, 0.5)';
+        ctx.fill();
+
+        if (node.active) {
+          ctx.beginPath();
+          ctx.arc(node.x, node.y, node.radius + 5, 0, Math.PI * 2);
+          ctx.strokeStyle = 'rgba(0, 255, 65, 0.5)';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        }
+      });
+
+      requestAnimationFrame(animate);
+    };
+
     animate();
   }
 
-  simulateActivityFeed() {
-    const activities = [
-      'Pushed commit: "Fix critical bug in matrix rendering"',
-      'Created repository: "neural-network-interface"',
-      'Starred project: "threejs-cyberpunk-effects"',
-      'Opened issue: "Quantum entanglement not working"',
-      'Merged pull request: "Add blockchain integration"',
-      'Updated README.md',
-      'Deployed version 2.0.0',
-      'Fixed security vulnerability',
-      'Optimized rendering performance',
-      'Added voice command support'
-    ];
+  setupHeaderNavigation() {
+    const navLinks = document.querySelectorAll('.nav-link');
+    const navIndicator = document.querySelector('.nav-indicator');
     
-    const feed = document.getElementById('activity-feed');
+    // Initial header setup
+    this.updateHeaderNavigation();
     
-    // Add initial activities
-    for (let i = 0; i < 5; i++) {
-      this.addActivity(activities[Math.floor(Math.random() * activities.length)]);
-    }
-    
-    // Simulate new activity every few seconds
-    setInterval(() => {
-      if (Math.random() > 0.3) {
-        this.addActivity(activities[Math.floor(Math.random() * activities.length)]);
-      }
-    }, 3000);
-  }
+    // Add click handlers to nav links
+    navLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetFace = link.getAttribute('data-face');
+        this.rotateToFace(targetFace);
+      });
+    });
 
-  addActivity(text) {
-    const feed = document.getElementById('activity-feed');
-    const activity = document.createElement('div');
-    activity.className = 'activity-item';
-    activity.textContent = `[${new Date().toLocaleTimeString()}] ${text}`;
-    
-    feed.insertBefore(activity, feed.firstChild);
-    
-    // Limit to 10 activities
-    if (feed.children.length > 10) {
-      feed.removeChild(feed.lastChild);
-    }
-  }
-
-  /* ⛏️ CRYPTO MINING SIMULATOR */
-  setupMiningSimulator() {
-    const startBtn = document.getElementById('start-mining');
-    const stopBtn = document.getElementById('stop-mining');
-    
-    startBtn.addEventListener('click', () => this.startMining());
-    stopBtn.addEventListener('click', () => this.stopMining());
-    
-    this.setupMiningVisualization();
-  }
-
-  startMining() {
-    if (this.miningActive) return;
-    
-    this.miningActive = true;
-    this.hashRate = 1000;
-    this.playSound('mining');
-    
-    this.miningInterval = setInterval(() => {
-      this.hashRate += Math.random() * 100 - 50;
-      this.hashRate = Math.max(500, Math.min(5000, this.hashRate));
+    // Add hover effects to nav links
+    navLinks.forEach(link => {
+      link.addEventListener('mouseenter', () => {
+        gsap.to(link, {
+          scale: 1.05,
+          duration: 0.2,
+          ease: "power2.out"
+        });
+      });
       
-      document.getElementById('hash-rate').textContent = 
-        Math.floor(this.hashRate).toLocaleString() + ' H/s';
-      
-      // Mine a block occasionally
-      if (Math.random() > 0.8) {
-        this.mineBlock();
-      }
-      
-    }, 100);
-    
-    this.addDiscovery('Mining rig activated...');
-    this.addDiscovery('Initializing quantum processors...');
-  }
-
-  stopMining() {
-    if (!this.miningActive) return;
-    
-    this.miningActive = false;
-    clearInterval(this.miningInterval);
-    this.hashRate = 0;
-    
-    document.getElementById('hash-rate').textContent = '0 H/s';
-    this.addDiscovery('Mining operations ceased.');
-  }
-
-  mineBlock() {
-    this.blocksMined++;
-    document.getElementById('blocks-mined').textContent = this.blocksMined;
-    
-    this.addDiscovery(`Block #${this.blocksMined} mined successfully!`);
-    
-    // Discover projects occasionally
-    if (this.blocksMined % 3 === 0 && this.projectsFound < this.totalProjects) {
-      this.discoverProject();
-    }
-  }
-
-  discoverProject() {
-    this.projectsFound++;
-    document.getElementById('projects-found').textContent = 
-      `${this.projectsFound}/${this.totalProjects}`;
-    
-    const projects = [
-      '3D Portfolio Gateway',
-      'Neural Network API', 
-      'Blockchain Explorer'
-    ];
-    
-    this.addDiscovery(`🚀 PROJECT DISCOVERED: ${projects[this.projectsFound - 1]}`);
-    
-    // Visual celebration
-    gsap.to('#projects-found', {
-      scale: 1.5,
-      duration: 0.3,
-      yoyo: true,
-      repeat: 2,
-      ease: "power2.inOut"
+      link.addEventListener('mouseleave', () => {
+        gsap.to(link, {
+          scale: 1,
+          duration: 0.2,
+          ease: "power2.out"
+        });
+      });
     });
   }
 
-  addDiscovery(text) {
-    const log = document.getElementById('discovery-log');
-    const discovery = document.createElement('div');
-    discovery.className = 'discovery-item';
-    discovery.textContent = `[${new Date().toLocaleTimeString()}] ${text}`;
+  updateHeaderNavigation() {
+    const navLinks = document.querySelectorAll('.nav-link');
+    const navIndicator = document.querySelector('.nav-indicator');
+    const activeLink = document.querySelector(`.nav-link[data-face="${this.currentFace}"]`);
     
-    log.insertBefore(discovery, log.firstChild);
+    // Update active states
+    navLinks.forEach(link => {
+      link.classList.remove('active');
+    });
     
-    // Limit log size
-    if (log.children.length > 8) {
-      log.removeChild(log.lastChild);
-    }
-  }
-
-  setupMiningVisualization() {
-    const canvas = document.getElementById('mining-canvas');
-    const ctx = canvas.getContext('2d');
-    
-    canvas.width = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
-    
-    const particles = [];
-    
-    function animateMining() {
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    if (activeLink) {
+      activeLink.classList.add('active');
       
-      // Add new particles
-      if (Math.random() > 0.7) {
-        particles.push({
-          x: Math.random() * canvas.width,
-          y: 0,
-          speed: Math.random() * 3 + 1,
-          size: Math.random() * 3 + 1,
-          color: Math.random() > 0.5 ? '#00ff00' : '#00cc00'
+      // Update indicator position with animation
+      const linkRect = activeLink.getBoundingClientRect();
+      const navRect = activeLink.parentElement.getBoundingClientRect();
+      
+      if (navIndicator) {
+        gsap.to(navIndicator, {
+          left: `${linkRect.left - navRect.left}px`,
+          width: `${linkRect.width}px`,
+          duration: 0.3,
+          ease: "power2.out"
         });
       }
-      
-      // Update and draw particles
-      particles.forEach((particle, index) => {
-        particle.y += particle.speed;
-        
-        ctx.fillStyle = particle.color;
-        ctx.beginPath();
-        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-        ctx.fill();
-        
-        // Remove particles that are off screen
-        if (particle.y > canvas.height) {
-          particles.splice(index, 1);
-        }
-      });
-      
-      requestAnimationFrame(animateMining);
     }
-    
-    animateMining();
   }
 
-  playSound(type) {
-    const sound = document.getElementById(type + '-sound');
-    if (sound) {
-      sound.currentTime = 0;
-      sound.play().catch(e => console.log('Audio play failed:', e));
+  setupTouchControls() {
+    const cubeScene = document.getElementById('cube-scene');
+    
+    // Use Hammer.js for better touch handling
+    const hammer = new Hammer(cubeScene);
+    hammer.get('swipe').set({ direction: Hammer.DIRECTION_HORIZONTAL });
+    
+    hammer.on('swipeleft', () => {
+      this.rotateCube(60);
+    });
+    
+    hammer.on('swiperight', () => {
+      this.rotateCube(-60);
+    });
+
+    // Mouse drag for desktop
+    let mouseDown = false;
+    let startX = 0;
+
+    cubeScene.addEventListener('mousedown', (e) => {
+      mouseDown = true;
+      startX = e.clientX;
+    });
+
+    cubeScene.addEventListener('mousemove', (e) => {
+      if (!mouseDown) return;
+      const currentX = e.clientX;
+      const diff = startX - currentX;
+      
+      if (Math.abs(diff) > 50) {
+        if (diff > 0) {
+          this.rotateCube(60);
+        } else {
+          this.rotateCube(-60);
+        }
+        mouseDown = false;
+      }
+    });
+
+    cubeScene.addEventListener('mouseup', () => {
+      mouseDown = false;
+    });
+
+    // Prevent default touch behavior
+    cubeScene.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+    });
+
+    cubeScene.addEventListener('touchmove', (e) => {
+      e.preventDefault();
+    });
+  }
+
+  setupNavigation() {
+    document.addEventListener('keydown', (e) => {
+      // Don't rotate if user is typing in a form input
+      const isTypingInForm = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA';
+      if (this.isRotating || isTypingInForm) return;
+      
+      if (e.key === 'ArrowRight' || e.key === 'd') {
+        this.rotateCube(-60);
+      } else if (e.key === 'ArrowLeft' || e.key === 'a') {
+        this.rotateCube(60);
+      }
+    });
+
+    const cubeFaces = document.querySelectorAll('.cube-face');
+    cubeFaces.forEach(face => {
+      face.addEventListener('click', (e) => {
+        // Don't rotate if clicking on form elements
+        if (e.target.closest('.project-card') || e.target.closest('.contact-link') || e.target.closest('.project-btn') || e.target.closest('input') || e.target.closest('textarea') || e.target.closest('.nav-link')) return;
+        
+        const faces = ['name', 'about', 'skills', 'projects', 'experience', 'contact'];
+        const currentIndex = faces.indexOf(e.currentTarget.dataset.face);
+        const nextIndex = (currentIndex + 1) % faces.length;
+        this.rotateToFace(faces[nextIndex]);
+      });
+    });
+
+    // Contact form submission
+    const contactForm = document.querySelector('.contact-form');
+    if (contactForm) {
+      contactForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        alert('Message transmitted! (This is a demo - in a real portfolio, this would connect to a backend)');
+        contactForm.reset();
+      });
+    }
+  }
+
+  setupHoverEffects() {
+    const faces = document.querySelectorAll('.cube-face');
+    faces.forEach(face => {
+      face.addEventListener('mouseenter', () => {
+        gsap.to(face, { 
+          scale: 1.02, 
+          duration: 0.3,
+          ease: "back.out(1.7)"
+        });
+      });
+      face.addEventListener('mouseleave', () => {
+        gsap.to(face, { 
+          scale: 1, 
+          duration: 0.3,
+          ease: "power2.out"
+        });
+      });
+    });
+
+    // Smooth arrow hover effects
+    const arrows = document.querySelectorAll('.nav-arrow');
+    arrows.forEach(arrow => {
+      arrow.addEventListener('mouseenter', () => {
+        gsap.to(arrow, {
+          scale: 1.1,
+          duration: 0.2,
+          ease: "power2.out"
+        });
+      });
+      arrow.addEventListener('mouseleave', () => {
+        gsap.to(arrow, {
+          scale: 1,
+          duration: 0.2,
+          ease: "power2.out"
+        });
+      });
+    });
+  }
+
+  rotateCube(angle) {
+    if (this.isRotating) return;
+    this.isRotating = true;
+    
+    const faces = ['name', 'about', 'skills', 'projects', 'experience', 'contact'];
+    const currentIndex = faces.indexOf(this.currentFace);
+    const newIndex = (currentIndex + (angle > 0 ? -1 : 1) + faces.length) % faces.length;
+    this.currentFace = faces[newIndex];
+    
+    this.animateRotation(angle);
+  }
+
+  rotateToFace(faceName) {
+    if (this.isRotating || this.currentFace === faceName) return;
+    this.isRotating = true;
+    
+    const faces = ['name', 'about', 'skills', 'projects', 'experience', 'contact'];
+    const currentIndex = faces.indexOf(this.currentFace);
+    const targetIndex = faces.indexOf(faceName);
+    const angleDiff = (targetIndex - currentIndex) * -60;
+    
+    this.currentRotation += angleDiff;
+    this.currentFace = faceName;
+    this.animateRotation(angleDiff);
+  }
+
+  animateRotation(angle) {
+    // Calculate the new rotation
+    this.currentRotation += angle;
+    
+    // Set rotating to false immediately so next click can happen
+    this.isRotating = true;
+    
+    // Use a faster, more responsive animation
+    gsap.to(this.mainCube, {
+      rotateY: this.currentRotation,
+      duration: 0.8, // Faster duration
+      ease: "power2.inOut",
+      onComplete: () => {
+        this.isRotating = false;
+        this.updateHeaderNavigation(); // Update header after rotation
+      }
+    });
+
+    // Quick arrow pulse (non-blocking)
+    const arrowDirection = angle > 0 ? '.nav-arrow-left' : '.nav-arrow-right';
+    const arrow = document.querySelector(arrowDirection);
+    if (arrow) {
+      gsap.fromTo(arrow,
+        {
+          scale: 1.2
+        },
+        {
+          scale: 1,
+          duration: 0.3,
+          ease: "power2.out"
+        }
+      );
+    }
+
+    // Quick face glow (non-blocking)
+    const activeFace = document.querySelector(`[data-face="${this.currentFace}"]`);
+    if (activeFace) {
+      gsap.fromTo(activeFace, 
+        {
+          boxShadow: "0 0 30px rgba(0, 255, 65, 0.4)"
+        },
+        {
+          boxShadow: "0 0 50px rgba(0, 255, 65, 0.3)",
+          duration: 0.4,
+          ease: "power2.out"
+        }
+      );
+    }
+
+    // Add a subtle pulse effect to the header when rotating
+    const header = document.querySelector('.cyber-header');
+    if (header) {
+      gsap.fromTo(header,
+        {
+          boxShadow: "0 0 40px rgba(0, 255, 65, 0.5)"
+        },
+        {
+          boxShadow: "0 0 30px rgba(0, 255, 65, 0.3)",
+          duration: 0.5,
+          ease: "power2.out"
+        }
+      );
     }
   }
 }
 
-// Initialize everything when page loads
+// Initialize the portfolio when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-  const portfolio = new CyberPortfolio();
-  
-  // Project card interactions
-  const projectCards = document.querySelectorAll('.project-card');
-  projectCards.forEach(card => {
-    card.addEventListener('click', () => {
-      const projectId = card.dataset.project;
-      // Add your project detail logic here
-    });
-
-    card.addEventListener('mouseenter', () => {
-      gsap.to(card, {
-        scale: 1.02,
-        duration: 0.3,
-        ease: "power2.out"
-      });
-    });
-
-    card.addEventListener('mouseleave', () => {
-      gsap.to(card, {
-        scale: 1,
-        duration: 0.3,
-        ease: "power2.out"
-      });
-    });
-  });
-
-  // Form submission
-  const contactForm = document.querySelector('.contact-form');
-  const cyberButton = contactForm.querySelector('.cyber-button');
-  
-  cyberButton.addEventListener('click', (e) => {
-    e.preventDefault();
-    
-    gsap.to(cyberButton, {
-      background: '#00cc00',
-      duration: 0.2,
-      yoyo: true,
-      repeat: 1
-    });
-
-    setTimeout(() => {
-      alert('TRANSMISSION INITIATED\nMessage encrypted and sent through secure channels.');
-    }, 1000);
-  });
-
-  // Window controls
-  const windowControls = document.querySelectorAll('.window-controls button');
-  windowControls.forEach(control => {
-    control.addEventListener('click', (e) => {
-      const window = e.target.closest('.terminal-window');
-      if (e.target.classList.contains('minimize')) {
-        gsap.to(window, {
-          scale: 0.9,
-          opacity: 0.7,
-          duration: 0.3
-        });
-      } else if (e.target.classList.contains('close')) {
-        gsap.to(window, {
-          scale: 0,
-          opacity: 0,
-          duration: 0.3,
-          onComplete: () => {
-            window.style.display = 'none';
-          }
-        });
-      }
-    });
-  });
+  window.portfolio = new CyberCubePortfolio();
 });
 
 // Handle window resize
 window.addEventListener('resize', () => {
-  const canvases = document.querySelectorAll('canvas');
-  canvases.forEach(canvas => {
-    if (canvas.id !== 'github-stream' && canvas.id !== 'mining-canvas') {
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-    }
-  });
+  if (window.portfolio) {
+    window.portfolio.updateHeaderNavigation();
+  }
 });

@@ -2,301 +2,290 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Cyberpunk Portfolio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Harshitha | Cyber Portfolio</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Neon Sign -->
-  <div id="neon-sign" class="neon-text">YOUR_NAME</div>
+  <!-- Custom Cursor -->
+  <div class="cursor"></div>
+  <div class="cursor-follower"></div>
+  <canvas id="cursor-trail"></canvas>
 
-  <!-- Terminal Navigation -->
-  <div id="terminal-nav">
-    <div class="nav-line">
-      <span class="prompt">visitor@portfolio:~$ </span>
-      <span class="command">navigate</span>
+  <!-- 3D Matrix Background -->
+  <div id="matrix-bg"></div>
+  
+  <!-- Cyberpunk Header Navigation -->
+  <header class="cyber-header">
+    <div class="header-container">
+      <div class="logo">
+        <span class="logo-text">HARSHITHA_DEV</span>
+        <div class="logo-pulse"></div>
+      </div>
+      
+      <nav class="cyber-nav">
+        <div class="nav-links">
+          <a href="#name" class="nav-link active" data-face="name">
+            <span class="nav-icon">[HOME]</span>
+          </a>
+          <a href="#about" class="nav-link" data-face="about">
+            <span class="nav-icon">[ABOUT]</span>
+          </a>
+          <a href="#skills" class="nav-link" data-face="skills">
+            <span class="nav-icon">[SKILLS]</span>
+          </a>
+          <a href="#projects" class="nav-link" data-face="projects">
+            <span class="nav-icon">[PROJECTS]</span>
+          </a>
+          <a href="#experience" class="nav-link" data-face="experience">
+            <span class="nav-icon">[EXP]</span>
+          </a>
+          <a href="#contact" class="nav-link" data-face="contact">
+            <span class="nav-icon">[CONTACT]</span>
+          </a>
+        </div>
+        
+        <div class="nav-indicator"></div>
+      </nav>
+      
+      <div class="header-status">
+        <div class="status-dot"></div>
+        <span class="status-text">ONLINE</span>
+      </div>
     </div>
-    <div class="nav-options">
-      <button data-section="home">/home</button>
-      <button data-section="about">/about</button>
-      <button data-section="skills">/skills</button>
-      <button data-section="projects">/projects</button>
-      <button data-section="github">/github_live</button>
-      <button data-section="crypto">/crypto_mine</button>
-      <button data-section="contact">/contact</button>
-    </div>
+  </header>
+
+  <!-- Navigation Arrows -->
+  <div class="nav-arrow nav-arrow-left" onclick="portfolio.rotateCube(60)">
+    <div class="arrow-icon">◀</div>
+    <div class="arrow-text">PREV</div>
   </div>
-
-  <!-- Main Content Container -->
-  <div id="main-container">
-    <!-- Home Section -->
-    <section id="home" class="section active">
-      <div class="hologram-display">
-        <div class="hologram-avatar">
-          <div class="avatar-glitch"></div>
-          <h1 class="cyber-text">DEVELOPER_NAME</h1>
-          <p class="cyber-tagline">> Full-Stack Cyberpunk Developer</p>
-        </div>
-        <div class="status-grid">
-          <div class="status-item">
-            <span class="status-label">STATUS:</span>
-            <span class="status-value online">ONLINE</span>
+  
+  <div class="nav-arrow nav-arrow-right" onclick="portfolio.rotateCube(-60)">
+    <div class="arrow-icon">▶</div>
+    <div class="arrow-text">NEXT</div>
+  </div>
+  
+  <!-- Main Container -->
+  <div id="cube-scene">
+    <!-- Main Cube -->
+    <div id="main-cube">
+      <!-- Home Face -->
+      <div class="cube-face face-front active" data-face="name">
+        <canvas class="neural-network-bg"></canvas>
+        <div class="face-content">
+          <div class="glitch-text" data-text="HARSHITHA">HARSHITHA</div>
+          <div class="cyber-subtitle">AI & FULL-STACK DEVELOPER</div>
+          <div class="contact-info">
+            <p>> harshithachintagunta06@gmail.com</p>
+            <p>> +91 6301406549</p>
+            <p>> Tadepalligudem, AP</p>
           </div>
-          <div class="status-item">
-            <span class="status-label">LOCATION:</span>
-            <span class="status-value">DIGITAL_REALM</span>
-          </div>
-          <div class="status-item">
-            <span class="status-label">MISSION:</span>
-            <span class="status-value">BUILDING_THE_FUTURE</span>
-          </div>
-          <div class="status-item">
-            <span class="status-label">NEON_SIGN:</span>
-            <input type="text" id="neon-input" placeholder="Type your name..." maxlength="20" class="neon-input">
+          <div class="neural-pulse"></div>
+          <div class="start-prompt">
+            <span class="blink">_</span>
+            <span class="prompt-text">Select a section to begin</span>
           </div>
         </div>
       </div>
-    </section>
-
-    <!-- About Section -->
-    <section id="about" class="section">
-      <div class="terminal-window">
-        <div class="window-header">
-          <span>about_me.txt</span>
-          <div class="window-controls">
-            <button class="minimize">−</button>
-            <button class="close">×</button>
-          </div>
-        </div>
-        <div class="window-content">
-          <div class="command-line">
-            <span class="prompt">$ cat about_me.txt</span>
-          </div>
-          <div class="content-text">
-            <p>> Greetings, entity.</p>
-            <p>> I am a cybernetic organism living in the digital realm,</p>
-            <p>> specializing in creating immersive web experiences that</p>
-            <p>> blur the line between reality and virtual space.</p>
-            <br>
-            <p>> When not coding, I can be found:</p>
-            <p>> - Consuming unreasonable amounts of coffee</p>
-            <p>> - Debugging reality itself</p>
-            <p>> - Plotting world domination through clean code</p>
-            <br>
-            <p>> Current objective: Find worthy challenges to conquer.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Skills Section -->
-    <section id="skills" class="section">
-      <div class="skills-dashboard">
-        <h2 class="cyber-title">SYSTEM DIAGNOSTICS</h2>
-        <div class="skills-grid">
-          <div class="skill-category">
-            <h3>FRONTEND_OS</h3>
-            <div class="skill-item">
-              <span>JavaScript/TypeScript</span>
-              <div class="skill-bar"><div class="skill-level" data-level="95"></div></div>
+      
+      <!-- About Face -->
+      <div class="cube-face face-right" data-face="about">
+        <div class="face-content">
+          <h2>> ABOUT_SYSTEM</h2>
+          <div class="about-content">
+            <div class="bio-section">
+              <p>AI and Full-Stack Developer pursuing B.Tech at R V R & J C College of Engineering. Passionate about building intelligent web applications and machine learning solutions.</p>
             </div>
-            <div class="skill-item">
-              <span>React/Next.js</span>
-              <div class="skill-bar"><div class="skill-level" data-level="90"></div></div>
-            </div>
-            <div class="skill-item">
-              <span>Three.js/WebGL</span>
-              <div class="skill-bar"><div class="skill-level" data-level="85"></div></div>
-            </div>
-          </div>
-          <div class="skill-category">
-            <h3>BACKEND_CORE</h3>
-            <div class="skill-item">
-              <span>Node.js/Python</span>
-              <div class="skill-bar"><div class="skill-level" data-level="88"></div></div>
-            </div>
-            <div class="skill-item">
-              <span>Database Systems</span>
-              <div class="skill-bar"><div class="skill-level" data-level="82"></div></div>
-            </div>
-            <div class="skill-item">
-              <span>API Architecture</span>
-              <div class="skill-bar"><div class="skill-level" data-level="85"></div></div>
-            </div>
-          </div>
-          <div class="skill-category">
-            <h3>CYBERWARE</h3>
-            <div class="skill-item">
-              <span>AI/ML Integration</span>
-              <div class="skill-bar"><div class="skill-level" data-level="75"></div></div>
-            </div>
-            <div class="skill-item">
-              <span>Blockchain Tech</span>
-              <div class="skill-bar"><div class="skill-level" data-level="70"></div></div>
-            </div>
-            <div class="skill-item">
-              <span>Quantum Computing</span>
-              <div class="skill-bar"><div class="skill-level" data-level="65"></div></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Projects Section -->
-    <section id="projects" class="section">
-      <div class="projects-grid">
-        <h2 class="cyber-title">PROJECT_ARCHIVES</h2>
-        <div class="projects-container">
-          <div class="project-card" data-project="1">
-            <div class="project-hologram">
-              <div class="hologram-icon">🚀</div>
-            </div>
-            <div class="project-info">
-              <h3>3D Portfolio Gateway</h3>
-              <p>Immersive WebGL experience that you just came through</p>
-              <div class="project-tech">
-                <span>Three.js</span>
-                <span>WebGL</span>
-                <span>GSAP</span>
+            
+            <div class="info-grid">
+              <div class="info-item">
+                <h3>EDUCATION</h3>
+                <p>B.Tech Computer Science</p>
+                <p>R V R & J C College of Engineering</p>
+                <p>2023 - 2027 | CGPA: 8.5+</p>
+              </div>
+              
+              <div class="info-item">
+                <h3>FOCUS</h3>
+                <p>AI/ML Development</p>
+                <p>Full-Stack Web</p>
+                <p>Creative Coding</p>
               </div>
             </div>
           </div>
-          <div class="project-card" data-project="2">
-            <div class="project-hologram">
-              <div class="hologram-icon">🤖</div>
+        </div>
+      </div>
+      
+      <!-- Skills Face -->
+      <div class="cube-face face-back-right" data-face="skills">
+        <div class="face-content">
+          <h2>> SKILL_MATRIX</h2>
+          <div class="skills-container">
+            <div class="skill-category">
+              <h3>LANGUAGES</h3>
+              <div class="skill-list">
+                <div class="skill-item">Python</div>
+                <div class="skill-item">JavaScript</div>
+                <div class="skill-item">Java</div>
+                <div class="skill-item">SQL</div>
+                <div class="skill-item">HTML/CSS</div>
+              </div>
             </div>
-            <div class="project-info">
-              <h3>Neural Network API</h3>
-              <p>AI-powered recommendation system with real-time processing</p>
-              <div class="project-tech">
+            
+            <div class="skill-category">
+              <h3>TECHNOLOGIES</h3>
+              <div class="skill-list">
+                <div class="skill-item">React/Next.js</div>
+                <div class="skill-item">Node.js</div>
+                <div class="skill-item">Three.js</div>
+                <div class="skill-item">TensorFlow</div>
+                <div class="skill-item">MongoDB</div>
+              </div>
+            </div>
+            
+            <div class="skill-category">
+              <h3>TOOLS</h3>
+              <div class="skill-list">
+                <div class="skill-item">Git/GitHub</div>
+                <div class="skill-item">VS Code</div>
+                <div class="skill-item">Postman</div>
+                <div class="skill-item">Figma</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Projects Face -->
+      <div class="cube-face face-back" data-face="projects">
+        <div class="face-content">
+          <h2>> PROJECT_ARCHIVES</h2>
+          <div class="projects-container">
+            <div class="project-card">
+              <h3>AI Music Recommender</h3>
+              <p>Real-time emotion detection and music suggestion system using CNN and FER2013 dataset</p>
+              <div class="tech-stack">
                 <span>Python</span>
                 <span>TensorFlow</span>
-                <span>FastAPI</span>
+                <span>OpenCV</span>
+                <span>Flask</span>
+              </div>
+              <div class="project-links">
+                <button class="project-btn" onclick="window.open('#', '_blank')">View Demo</button>
+                <button class="project-btn" onclick="window.open('#', '_blank')">GitHub</button>
               </div>
             </div>
-          </div>
-          <div class="project-card" data-project="3">
-            <div class="project-hologram">
-              <div class="hologram-icon">🌐</div>
-            </div>
-            <div class="project-info">
-              <h3>Blockchain Explorer</h3>
-              <p>Real-time cryptocurrency tracking dashboard with analytics</p>
-              <div class="project-tech">
+            
+            <div class="project-card">
+              <h3>Bot Companion Dashboard</h3>
+              <p>Multi-AI chatbot interface with unique personalities using Google Gemini API</p>
+              <div class="tech-stack">
                 <span>React</span>
-                <span>Web3</span>
                 <span>Node.js</span>
+                <span>Gemini API</span>
+                <span>SQLite</span>
+              </div>
+              <div class="project-links">
+                <button class="project-btn" onclick="window.open('#', '_blank')">View Demo</button>
+                <button class="project-btn" onclick="window.open('#', '_blank')">GitHub</button>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </section>
-
-    <!-- GitHub Live Section -->
-    <section id="github" class="section">
-      <div class="data-stream-container">
-        <h2 class="cyber-title">GITHUB_ACTIVITY_STREAM</h2>
-        <div class="github-stats">
-          <div class="stat-item">
-            <span class="stat-value" id="repo-count">0</span>
-            <span class="stat-label">REPOSITORIES</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value" id="commit-count">0</span>
-            <span class="stat-label">COMMITS</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-value" id="star-count">0</span>
-            <span class="stat-label">STARS</span>
-          </div>
-        </div>
-        <div class="data-stream">
-          <canvas id="github-stream"></canvas>
-        </div>
-        <div class="recent-activity">
-          <h3>RECENT_ACTIVITY</h3>
-          <div id="activity-feed" class="activity-feed">
-            <!-- GitHub activity will appear here -->
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Crypto Mining Simulator -->
-    <section id="crypto" class="section">
-      <div class="mining-rig">
-        <h2 class="cyber-title">BLOCKCHAIN_MINING_SIM</h2>
-        <div class="mining-stats">
-          <div class="mining-stat">
-            <span class="mining-label">HASH_RATE:</span>
-            <span class="mining-value" id="hash-rate">0 H/s</span>
-          </div>
-          <div class="mining-stat">
-            <span class="mining-label">BLOCKS_MINED:</span>
-            <span class="mining-value" id="blocks-mined">0</span>
-          </div>
-          <div class="mining-stat">
-            <span class="mining-label">PROJECTS_FOUND:</span>
-            <span class="mining-value" id="projects-found">0/3</span>
-          </div>
-        </div>
-        <div class="mining-visual">
-          <canvas id="mining-canvas"></canvas>
-          <div class="mining-controls">
-            <button id="start-mining" class="cyber-button">INITIATE_MINING</button>
-            <button id="stop-mining" class="cyber-button">CEASE_OPERATIONS</button>
-          </div>
-        </div>
-        <div class="discovery-log" id="discovery-log">
-          <!-- Mining discoveries will appear here -->
-        </div>
-      </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="section">
-      <div class="contact-terminal">
-        <div class="terminal-header">
-          <span>secure_transmission.exe</span>
-        </div>
-        <div class="contact-form">
-          <div class="form-line">
-            <span class="prompt">$ echo "MESSAGE" > transmission.txt</span>
-          </div>
-          <input type="text" placeholder="YOUR_IDENTIFIER" class="cyber-input">
-          <input type="text" placeholder="SUBJECT_LINE" class="cyber-input">
-          <textarea placeholder="TRANSMISSION_CONTENT" class="cyber-textarea"></textarea>
-          <button class="cyber-button">INITIATE_TRANSMISSION</button>
-        </div>
-        <div class="contact-info">
-          <div class="info-item">
-            <span class="info-label">ENCRYPTION_KEY:</span>
-            <span class="info-value">hello@portfolio.dev</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">DIGITAL_FOOTPRINT:</span>
-            <span class="info-value">github.com/yourusername</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">NEURAL_LINK:</span>
-            <span class="info-value">linkedin.com/in/yourprofile</span>
+      
+      <!-- Experience Face -->
+      <div class="cube-face face-back-left" data-face="experience">
+        <div class="face-content">
+          <h2>> EXPERIENCE_CORE</h2>
+          <div class="experience-container">
+            <div class="experience-item">
+              <h3>Infosys Springboard</h3>
+              <p>AI Intern (Virtual) | Aug 2025 – Present</p>
+              <ul>
+                <li>Data preprocessing and model training</li>
+                <li>Machine learning libraries implementation</li>
+                <li>Python development for AI applications</li>
+              </ul>
+            </div>
+            
+            <div class="experience-item">
+              <h3>Google AI/ML</h3>
+              <p>Virtual Internship | May 2025 – July 2025</p>
+              <ul>
+                <li>Supervised and unsupervised ML algorithms</li>
+                <li>TensorFlow model development</li>
+                <li>Google Cloud Platform integration</li>
+              </ul>
+            </div>
+            
+            <div class="certifications">
+              <h3>CERTIFICATIONS</h3>
+              <div class="cert-list">
+                <div class="cert-item">Meta Front-End Developer</div>
+                <div class="cert-item">Database Management Systems (NPTEL)</div>
+                <div class="cert-item">Principles of Generative AI</div>
+                <div class="cert-item">Infosys AI Primer</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </section>
+
+      <!-- Contact Face -->
+      <div class="cube-face face-left" data-face="contact">
+        <div class="face-content">
+          <h2>> CONTACT_PROTOCOL</h2>
+          <div class="contact-container">
+            <div class="contact-methods">
+              <h3>DIRECT LINKS</h3>
+              <div class="contact-link" onclick="window.location.href='mailto:harshithachintagunta06@gmail.com'">
+                <span class="link-icon">[MAIL]</span>
+                <span>Email</span>
+              </div>
+              <div class="contact-link" onclick="window.open('https://linkedin.com/in/yourprofile', '_blank')">
+                <span class="link-icon">[LINKEDIN]</span>
+                <span>LinkedIn</span>
+              </div>
+              <div class="contact-link" onclick="window.open('https://github.com/yourusername', '_blank')">
+                <span class="link-icon">[GITHUB]</span>
+                <span>GitHub</span>
+              </div>
+              <div class="contact-link" onclick="window.open('https://leetcode.com/yourprofile', '_blank')">
+                <span class="link-icon">[LEETCODE]</span>
+                <span>LeetCode</span>
+              </div>
+            </div>
+            
+            <form class="contact-form">
+              <h3>SEND MESSAGE</h3>
+              <div class="form-group">
+                <input type="text" class="form-input" placeholder="Your Name" required>
+              </div>
+              <div class="form-group">
+                <input type="email" class="form-input" placeholder="Your Email" required>
+              </div>
+              <div class="form-group">
+                <textarea class="form-input" placeholder="Your Message" rows="4" required></textarea>
+              </div>
+              <button type="submit" class="cyber-btn">TRANSMIT MESSAGE</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- Background Elements -->
-  <div class="matrix-rain"></div>
-  <div class="glitch-overlay"></div>
-
-  <!-- Audio -->
-  <audio id="terminal-sound" src="../assets/typing.wav"></audio>
-  <audio id="click-sound" src="../assets/click.wav"></audio>
-  <audio id="mining-sound" src="../assets/mining.wav"></audio>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-  <script src="app.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.module.js"
+      }
+    }
+  </script>
+  <script type="module" src="app.js"></script>
 </body>
 </html>
