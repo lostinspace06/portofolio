@@ -4,7 +4,896 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Harshitha | Cyber Portfolio</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Courier New', monospace;
+      background: #000;
+      color: #0ff;
+      overflow: hidden;
+      height: 100vh;
+      cursor: none;
+    }
+
+    /* Custom Cursor */
+    .cursor {
+      position: fixed;
+      width: 8px;
+      height: 8px;
+      background: #0ff;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      mix-blend-mode: difference;
+    }
+
+    .cursor-follower {
+      position: fixed;
+      width: 40px;
+      height: 40px;
+      border: 2px solid #0ff;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transition: transform 0.15s ease;
+      mix-blend-mode: difference;
+    }
+
+    #cursor-trail {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9997;
+    }
+
+    /* 3D Matrix Background */
+    #matrix-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    /* Cyberpunk Header */
+    .cyber-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(0, 20, 0, 0.9);
+      backdrop-filter: blur(15px);
+      border-bottom: 1px solid #00ff41;
+      box-shadow: 0 0 30px rgba(0, 255, 65, 0.3);
+      z-index: 1000;
+      padding: 10px 0;
+    }
+
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+    }
+
+    .logo-text {
+      font-family: 'Courier New', monospace;
+      font-weight: bold;
+      color: #00ff41;
+      font-size: 1.1em;
+      text-shadow: 0 0 10px #00ff41;
+      letter-spacing: 1px;
+    }
+
+    .logo-pulse {
+      width: 8px;
+      height: 8px;
+      background: #00ff41;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+      box-shadow: 0 0 10px #00ff41;
+    }
+
+    .cyber-nav {
+      position: relative;
+      flex: 1;
+      max-width: 600px;
+    }
+
+    .nav-links {
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      position: relative;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      padding: 10px 15px;
+      text-decoration: none;
+      color: #00ff41;
+      border: 1px solid transparent;
+      border-radius: 5px;
+      transition: all 0.3s ease;
+      position: relative;
+      background: rgba(0, 255, 65, 0.05);
+      font-size: 0.9em;
+      font-weight: bold;
+    }
+
+    .nav-link:hover {
+      background: rgba(0, 255, 65, 0.1);
+      border-color: #00ff41;
+      box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .nav-link.active {
+      background: rgba(0, 255, 65, 0.15);
+      border-color: #00ff41;
+      box-shadow: 0 0 20px rgba(0, 255, 65, 0.4);
+    }
+
+    .nav-indicator {
+      position: absolute;
+      bottom: -12px;
+      height: 2px;
+      background: #00ff41;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px #00ff41;
+    }
+
+    .header-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 12px;
+      background: rgba(0, 255, 65, 0.1);
+      border: 1px solid #00ff41;
+      border-radius: 20px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      background: #00ff41;
+      border-radius: 50%;
+      animation: status-pulse 2s infinite;
+      box-shadow: 0 0 8px #00ff41;
+    }
+
+    .status-text {
+      font-size: 0.8em;
+      color: #00ff41;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    /* Navigation Arrows */
+    .nav-arrow {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 30, 0, 0.7);
+      border: 1px solid #00ff41;
+      border-radius: 8px;
+      padding: 20px 15px;
+      cursor: pointer;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-arrow:hover {
+      background: rgba(0, 255, 65, 0.2);
+      box-shadow: 0 0 20px rgba(0, 255, 65, 0.4);
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .nav-arrow-left {
+      left: 20px;
+    }
+
+    .nav-arrow-right {
+      right: 20px;
+    }
+
+    .arrow-icon {
+      font-size: 1.5em;
+      color: #00ff41;
+      text-shadow: 0 0 10px #00ff41;
+    }
+
+    .arrow-text {
+      font-size: 0.8em;
+      color: #00ff41;
+      letter-spacing: 1px;
+      font-weight: bold;
+    }
+
+    /* Main Scene */
+    #cube-scene {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      perspective: 1500px;
+      position: relative;
+    }
+
+    /* Main Cube */
+    #main-cube {
+      width: 400px;
+      height: 400px;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: rotateY(0deg);
+      transition: transform 1s ease-in-out;
+    }
+
+    .cube-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #00ff41;
+      border-radius: 8px;
+      background: rgba(0, 30, 0, 0.5);
+      backdrop-filter: blur(12px);
+      box-shadow: 
+        inset 0 0 40px rgba(0, 255, 65, 0.2),
+        0 0 50px rgba(0, 255, 65, 0.3);
+      overflow: hidden;
+      opacity: 0.9;
+    }
+
+    .cube-face::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(0, 255, 65, 0.15),
+        transparent
+      );
+      transition: left 0.6s ease;
+    }
+
+    .cube-face:hover::before {
+      left: 100%;
+    }
+
+    /* Face Positions */
+    .face-front       { transform: rotateY(0deg) translateZ(420px); }
+    .face-right       { transform: rotateY(60deg) translateZ(420px); }
+    .face-back-right  { transform: rotateY(120deg) translateZ(420px); }
+    .face-back        { transform: rotateY(180deg) translateZ(420px); }
+    .face-back-left   { transform: rotateY(240deg) translateZ(420px); }
+    .face-left        { transform: rotateY(300deg) translateZ(420px); }
+
+    /* Face Content */
+    .face-content {
+      padding: 25px;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      z-index: 2;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    /* Hide scrollbar but keep functionality */
+    .face-content::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .face-content::-webkit-scrollbar-track {
+      background: rgba(0, 255, 65, 0.1);
+    }
+
+    .face-content::-webkit-scrollbar-thumb {
+      background: #00ff41;
+      border-radius: 2px;
+    }
+
+    /* Home Face */
+    .home-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 15px;
+    }
+
+    .profile-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .profile-pic {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 2px solid #00ff41;
+      background: linear-gradient(45deg, #0a0a0a, #003300);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
+      position: relative;
+    }
+
+    .profile-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+    }
+
+    .profile-pic:hover .profile-image {
+      transform: scale(1.05);
+      filter: brightness(1.1) contrast(1.1);
+    }
+
+    .profile-pic-placeholder {
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 255, 65, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #00ff41;
+      font-size: 0.8em;
+      text-align: center;
+      padding: 10px;
+    }
+
+    .glitch-text {
+      font-size: 2em;
+      font-weight: bold;
+      text-shadow: 
+        0 0 8px #00ff41,
+        0 0 16px #00ff41,
+        0 0 32px #00ff41;
+      position: relative;
+      animation: glitch 5s infinite;
+      margin-bottom: 5px;
+    }
+
+    .cyber-subtitle {
+      font-size: 0.9em;
+      opacity: 0.8;
+      margin-bottom: 10px;
+      letter-spacing: 1.5px;
+    }
+
+    .contact-info {
+      font-size: 0.85em;
+      opacity: 0.9;
+      line-height: 1.6;
+      margin-bottom: 15px;
+    }
+
+    .contact-info p {
+      margin: 6px 0;
+    }
+
+    .start-prompt {
+      margin-top: 10px;
+      font-size: 0.85em;
+      opacity: 0.8;
+    }
+
+    .blink {
+      animation: blink 1s infinite;
+      color: #00ff41;
+    }
+
+    .neural-pulse {
+      width: 60px;
+      height: 1px;
+      background: #00ff41;
+      margin: 10px auto 0;
+      box-shadow: 0 0 6px #00ff41;
+      animation: pulse 2s infinite;
+    }
+
+    /* About Face */
+    .about-content {
+      text-align: left;
+      line-height: 1.5;
+    }
+
+    .bio-section {
+      margin-bottom: 20px;
+    }
+
+    .bio-section p {
+      font-size: 0.85em;
+      opacity: 0.9;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .info-item {
+      background: rgba(0, 255, 65, 0.05);
+      border: 1px solid rgba(0, 255, 65, 0.2);
+      border-radius: 5px;
+      padding: 15px;
+    }
+
+    .info-item h3 {
+      color: #00ff41;
+      margin-bottom: 10px;
+      font-size: 0.9em;
+      border-bottom: 1px solid #00ff41;
+      padding-bottom: 5px;
+    }
+
+    .info-item p {
+      font-size: 0.8em;
+      margin: 5px 0;
+      opacity: 0.9;
+    }
+
+    /* Skills Face */
+    .skills-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .skill-category {
+      text-align: left;
+    }
+
+    .skill-category h3 {
+      color: #00ff41;
+      margin-bottom: 10px;
+      font-size: 0.9em;
+      border-bottom: 1px solid #00ff41;
+      padding-bottom: 5px;
+    }
+
+    .skill-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .skill-item {
+      padding: 8px 12px;
+      background: rgba(0, 255, 65, 0.1);
+      border: 1px solid rgba(0, 255, 65, 0.3);
+      border-radius: 4px;
+      font-size: 0.8em;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+
+    .skill-item:hover {
+      background: rgba(0, 255, 65, 0.2);
+      transform: translateY(-2px);
+    }
+
+    /* Projects Face */
+    .projects-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      height: 100%;
+      overflow-y: auto;
+    }
+
+    .project-card {
+      background: rgba(0, 255, 65, 0.05);
+      border: 1px solid rgba(0, 255, 65, 0.3);
+      border-radius: 8px;
+      padding: 20px;
+      text-align: left;
+      transition: all 0.3s ease;
+    }
+
+    .project-card:hover {
+      background: rgba(0, 255, 65, 0.1);
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 255, 65, 0.2);
+    }
+
+    .project-card h3 {
+      color: #00ff41;
+      margin-bottom: 10px;
+      font-size: 1em;
+    }
+
+    .project-card p {
+      font-size: 0.8em;
+      opacity: 0.9;
+      margin-bottom: 15px;
+      line-height: 1.5;
+    }
+
+    .tech-stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+
+    .tech-stack span {
+      font-size: 0.7em;
+      padding: 4px 8px;
+      background: rgba(0, 255, 65, 0.2);
+      border: 1px solid rgba(0, 255, 65, 0.4);
+      border-radius: 3px;
+    }
+
+    .project-links {
+      display: flex;
+      gap: 10px;
+    }
+
+    .project-btn {
+      padding: 8px 16px;
+      background: rgba(0, 255, 65, 0.1);
+      border: 1px solid #00ff41;
+      color: #00ff41;
+      border-radius: 4px;
+      font-size: 0.8em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Courier New', monospace;
+    }
+
+    .project-btn:hover {
+      background: rgba(0, 255, 65, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 255, 65, 0.3);
+    }
+
+    /* Experience Face */
+    .experience-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      height: 100%;
+      overflow-y: auto;
+    }
+
+    .experience-item {
+      background: rgba(0, 255, 65, 0.05);
+      border: 1px solid rgba(0, 255, 65, 0.3);
+      border-radius: 8px;
+      padding: 15px;
+      text-align: left;
+    }
+
+    .experience-item h3 {
+      color: #00ff41;
+      margin-bottom: 8px;
+      font-size: 0.9em;
+    }
+
+    .experience-item p {
+      font-size: 0.8em;
+      opacity: 0.9;
+      margin-bottom: 10px;
+      font-style: italic;
+    }
+
+    .experience-item ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .experience-item li {
+      font-size: 0.8em;
+      margin: 5px 0;
+      opacity: 0.9;
+    }
+
+    .certifications {
+      text-align: left;
+    }
+
+    .certifications h3 {
+      color: #00ff41;
+      margin-bottom: 10px;
+      font-size: 0.9em;
+      border-bottom: 1px solid #00ff41;
+      padding-bottom: 5px;
+    }
+
+    .cert-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .cert-item {
+      padding: 8px 12px;
+      background: rgba(0, 255, 65, 0.1);
+      border: 1px solid rgba(0, 255, 65, 0.3);
+      border-radius: 4px;
+      font-size: 0.8em;
+      transition: all 0.3s ease;
+    }
+
+    .cert-item:hover {
+      background: rgba(0, 255, 65, 0.2);
+      transform: translateX(3px);
+    }
+
+    /* Contact Face */
+    .contact-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      height: 100%;
+      overflow-y: auto;
+    }
+
+    .contact-methods h3,
+    .contact-form h3 {
+      color: #00ff41;
+      margin-bottom: 15px;
+      font-size: 0.9em;
+      border-bottom: 1px solid #00ff41;
+      padding-bottom: 5px;
+      text-align: left;
+    }
+
+    .contact-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: rgba(0, 255, 65, 0.1);
+      border: 1px solid rgba(0, 255, 65, 0.3);
+      border-radius: 5px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.9em;
+    }
+
+    .contact-link:hover {
+      background: rgba(0, 255, 65, 0.2);
+      transform: translateX(5px);
+      box-shadow: 0 4px 12px rgba(0, 255, 65, 0.2);
+    }
+
+    .link-icon {
+      font-size: 0.8em;
+      color: #00ff41;
+      font-weight: bold;
+    }
+
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-input {
+      background: rgba(0, 20, 0, 0.3);
+      border: 1px solid rgba(0, 255, 65, 0.3);
+      padding: 10px;
+      color: #00ff41;
+      font-family: 'Courier New', monospace;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+      font-size: 0.8em;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #00ff41;
+      box-shadow: 0 0 15px rgba(0, 255, 65, 0.3);
+    }
+
+    .form-input::placeholder {
+      color: rgba(0, 255, 65, 0.6);
+    }
+
+    .cyber-btn {
+      padding: 10px 20px;
+      border: 1px solid #00ff41;
+      background: transparent;
+      color: #00ff41;
+      font-family: 'Courier New', monospace;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-radius: 4px;
+      margin-top: 10px;
+    }
+
+    .cyber-btn:hover {
+      background: rgba(0, 255, 65, 0.1);
+      box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+    }
+
+    /* Animations */
+    @keyframes glitch {
+      0%, 100% { transform: translate(0); }
+      5% { transform: translate(-1px, 1px); }
+      10% { transform: translate(1px, -1px); }
+      15% { transform: translate(-1px, -1px); }
+      20% { transform: translate(1px, 1px); }
+      50% { transform: translate(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+
+    @keyframes status-pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      #main-cube {
+        width: 340px;
+        height: 340px;
+      }
+      
+      .face-front       { transform: rotateY(0deg) translateZ(370px); }
+      .face-right       { transform: rotateY(60deg) translateZ(370px); }
+      .face-back-right  { transform: rotateY(120deg) translateZ(370px); }
+      .face-back        { transform: rotateY(180deg) translateZ(370px); }
+      .face-back-left   { transform: rotateY(240deg) translateZ(370px); }
+      .face-left        { transform: rotateY(300deg) translateZ(370px); }
+      
+      .glitch-text {
+        font-size: 1.8em;
+      }
+      
+      .face-content {
+        padding: 20px;
+      }
+
+      .header-container {
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px;
+      }
+      
+      .cyber-nav {
+        order: 3;
+        width: 100%;
+      }
+      
+      .nav-links {
+        gap: 2px;
+      }
+      
+      .nav-link {
+        padding: 8px 10px;
+        font-size: 0.8em;
+      }
+      
+      .logo-text {
+        font-size: 0.9em;
+      }
+      
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .skill-list {
+        grid-template-columns: 1fr;
+      }
+      
+      .contact-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      
+      .project-links {
+        flex-direction: column;
+      }
+      
+      .nav-arrow {
+        padding: 15px 10px;
+      }
+      
+      .nav-arrow-left {
+        left: 10px;
+      }
+      
+      .nav-arrow-right {
+        right: 10px;
+      }
+      
+      .arrow-icon {
+        font-size: 1.2em;
+      }
+      
+      .arrow-text {
+        font-size: 0.7em;
+      }
+
+      .profile-pic {
+        width: 100px;
+        height: 100px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .nav-link {
+        padding: 8px 12px;
+      }
+      
+      .nav-link .nav-icon {
+        font-size: 0.9em;
+      }
+    }
+
+    @media (hover: none) and (pointer: coarse) {
+      .cursor, .cursor-follower {
+        display: none;
+      }
+      
+      * {
+        cursor: auto;
+      }
+    }
+  </style>
 </head>
 <body>
   <!-- Custom Cursor -->
@@ -72,19 +961,26 @@
     <div id="main-cube">
       <!-- Home Face -->
       <div class="cube-face face-front active" data-face="name">
-        <canvas class="neural-network-bg"></canvas>
         <div class="face-content">
-          <div class="glitch-text" data-text="HARSHITHA">HARSHITHA</div>
-          <div class="cyber-subtitle">AI & FULL-STACK DEVELOPER</div>
-          <div class="contact-info">
-            <p>> harshithachintagunta06@gmail.com</p>
-            <p>> +91 6301406549</p>
-            <p>> Tadepalligudem, AP</p>
-          </div>
-          <div class="neural-pulse"></div>
-          <div class="start-prompt">
-            <span class="blink">_</span>
-            <span class="prompt-text">Select a section to begin</span>
+          <div class="home-content">
+            <div class="profile-section">
+              <div class="profile-pic">
+                <!-- Replace the src with your actual photo -->
+                <img src="images/catto.jpeg" 
+                     alt="Harshitha" class="profile-image">
+              </div>
+              <div class="glitch-text" data-text="HARSHITHA">HARSHITHA</div>
+              <div class="cyber-subtitle">AI & FULL-STACK DEVELOPER</div>
+            </div>
+            <div class="contact-info">
+              <p>> harshithachintagunta06@gmail.com</p>
+              <p>> Tadepalligudem, AP</p>
+            </div>
+            <div class="neural-pulse"></div>
+            <div class="start-prompt">
+              <span class="blink">_</span>
+              <span class="prompt-text">Select a section to begin</span>
+            </div>
           </div>
         </div>
       </div>
@@ -279,13 +1175,448 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
-  <script type="importmap">
-    {
-      "imports": {
-        "three": "https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.module.js"
+  <script>
+    // Make it globally accessible
+    window.portfolio = null;
+
+    class CyberCubePortfolio {
+      constructor() {
+        this.currentFace = 'name';
+        this.currentRotation = 0;
+        this.isRotating = false;
+        this.mainCube = document.getElementById('main-cube');
+        this.mouse3D = { x: 0, y: 0, z: 0 };
+        this.ripples = [];
+        this.trailPoints = [];
+        
+        this.init();
+      }
+
+      init() {
+        this.setupCustomCursor();
+        this.setupCursorTrail();
+        this.setupMatrixBackground();
+        this.setupNavigation();
+        this.setupTouchControls();
+        this.setupHoverEffects();
+        this.setupHeaderNavigation();
+      }
+
+      setupCustomCursor() {
+        const cursor = document.querySelector('.cursor');
+        const cursorFollower = document.querySelector('.cursor-follower');
+
+        document.addEventListener('mousemove', (e) => {
+          cursor.style.left = e.clientX + 'px';
+          cursor.style.top = e.clientY + 'px';
+          cursorFollower.style.left = e.clientX + 'px';
+          cursorFollower.style.top = e.clientY + 'px';
+        });
+
+        const interactiveElements = document.querySelectorAll('.cube-face, .project-card, .skill-item, .contact-link, .project-btn, .nav-arrow, .nav-link');
+        
+        interactiveElements.forEach(element => {
+          element.addEventListener('mouseenter', () => {
+            cursor.style.transform = 'scale(1.5)';
+            cursor.style.borderColor = '#00ffff';
+          });
+          
+          element.addEventListener('mouseleave', () => {
+            cursor.style.transform = 'scale(1)';
+            cursor.style.borderColor = '#00ff41';
+          });
+        });
+      }
+
+      setupCursorTrail() {
+        const canvas = document.getElementById('cursor-trail');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+        });
+
+        document.addEventListener('mousemove', (e) => {
+          this.trailPoints.push({
+            x: e.clientX,
+            y: e.clientY,
+            life: 1
+          });
+
+          if (this.trailPoints.length > 20) {
+            this.trailPoints.shift();
+          }
+        });
+
+        const animateTrail = () => {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          for (let i = 0; i < this.trailPoints.length; i++) {
+            const point = this.trailPoints[i];
+            const size = 3 * point.life;
+            
+            ctx.beginPath();
+            ctx.arc(point.x, point.y, size, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(0, 255, 65, ${point.life * 0.5})`;
+            ctx.fill();
+
+            point.life -= 0.05;
+            if (point.life <= 0) {
+              this.trailPoints.splice(i, 1);
+              i--;
+            }
+          }
+
+          requestAnimationFrame(animateTrail);
+        };
+
+        animateTrail();
+      }
+
+      setupMatrixBackground() {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const matrixBg = document.getElementById('matrix-bg');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        matrixBg.appendChild(canvas);
+
+        const chars = "01";
+        const charArray = chars.split("");
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+        const drops = [];
+
+        for (let x = 0; x < columns; x++) {
+          drops[x] = 1;
+        }
+
+        const draw = () => {
+          ctx.fillStyle = "rgba(0, 0, 0, 0.04)";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          
+          ctx.fillStyle = "#00ff41";
+          ctx.font = fontSize + "px monospace";
+
+          for (let i = 0; i < drops.length; i++) {
+            const text = charArray[Math.floor(Math.random() * charArray.length)];
+            ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+            
+            if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+              drops[i] = 0;
+            }
+            drops[i]++;
+          }
+        };
+
+        setInterval(draw, 35);
+
+        window.addEventListener('resize', () => {
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+        });
+      }
+
+      setupHeaderNavigation() {
+        const navLinks = document.querySelectorAll('.nav-link');
+        const navIndicator = document.querySelector('.nav-indicator');
+        
+        // Initial header setup
+        this.updateHeaderNavigation();
+        
+        // Add click handlers to nav links
+        navLinks.forEach(link => {
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetFace = link.getAttribute('data-face');
+            this.rotateToFace(targetFace);
+          });
+        });
+
+        // Add hover effects to nav links
+        navLinks.forEach(link => {
+          link.addEventListener('mouseenter', () => {
+            gsap.to(link, {
+              scale: 1.05,
+              duration: 0.2,
+              ease: "power2.out"
+            });
+          });
+          
+          link.addEventListener('mouseleave', () => {
+            gsap.to(link, {
+              scale: 1,
+              duration: 0.2,
+              ease: "power2.out"
+            });
+          });
+        });
+      }
+
+      updateHeaderNavigation() {
+        const navLinks = document.querySelectorAll('.nav-link');
+        const navIndicator = document.querySelector('.nav-indicator');
+        const activeLink = document.querySelector(`.nav-link[data-face="${this.currentFace}"]`);
+        
+        // Update active states
+        navLinks.forEach(link => {
+          link.classList.remove('active');
+        });
+        
+        if (activeLink) {
+          activeLink.classList.add('active');
+          
+          // Update indicator position with animation
+          const linkRect = activeLink.getBoundingClientRect();
+          const navRect = activeLink.parentElement.getBoundingClientRect();
+          
+          if (navIndicator) {
+            gsap.to(navIndicator, {
+              left: `${linkRect.left - navRect.left}px`,
+              width: `${linkRect.width}px`,
+              duration: 0.3,
+              ease: "power2.out"
+            });
+          }
+        }
+      }
+
+      setupTouchControls() {
+        const cubeScene = document.getElementById('cube-scene');
+        
+        // Use Hammer.js for better touch handling
+        const hammer = new Hammer(cubeScene);
+        hammer.get('swipe').set({ direction: Hammer.DIRECTION_HORIZONTAL });
+        
+        hammer.on('swipeleft', () => {
+          this.rotateCube(60);
+        });
+        
+        hammer.on('swiperight', () => {
+          this.rotateCube(-60);
+        });
+
+        // Mouse drag for desktop
+        let mouseDown = false;
+        let startX = 0;
+
+        cubeScene.addEventListener('mousedown', (e) => {
+          mouseDown = true;
+          startX = e.clientX;
+        });
+
+        cubeScene.addEventListener('mousemove', (e) => {
+          if (!mouseDown) return;
+          const currentX = e.clientX;
+          const diff = startX - currentX;
+          
+          if (Math.abs(diff) > 50) {
+            if (diff > 0) {
+              this.rotateCube(60);
+            } else {
+              this.rotateCube(-60);
+            }
+            mouseDown = false;
+          }
+        });
+
+        cubeScene.addEventListener('mouseup', () => {
+          mouseDown = false;
+        });
+
+        // Prevent default touch behavior
+        cubeScene.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+        });
+
+        cubeScene.addEventListener('touchmove', (e) => {
+          e.preventDefault();
+        });
+      }
+
+      setupNavigation() {
+        document.addEventListener('keydown', (e) => {
+          // Don't rotate if user is typing in a form input
+          const isTypingInForm = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA';
+          if (this.isRotating || isTypingInForm) return;
+          
+          if (e.key === 'ArrowRight' || e.key === 'd') {
+            this.rotateCube(-60);
+          } else if (e.key === 'ArrowLeft' || e.key === 'a') {
+            this.rotateCube(60);
+          }
+        });
+
+        const cubeFaces = document.querySelectorAll('.cube-face');
+        cubeFaces.forEach(face => {
+          face.addEventListener('click', (e) => {
+            // Don't rotate if clicking on form elements
+            if (e.target.closest('.project-card') || e.target.closest('.contact-link') || e.target.closest('.project-btn') || e.target.closest('input') || e.target.closest('textarea') || e.target.closest('.nav-link')) return;
+            
+            const faces = ['name', 'about', 'skills', 'projects', 'experience', 'contact'];
+            const currentIndex = faces.indexOf(e.currentTarget.dataset.face);
+            const nextIndex = (currentIndex + 1) % faces.length;
+            this.rotateToFace(faces[nextIndex]);
+          });
+        });
+
+        // Contact form submission
+        const contactForm = document.querySelector('.contact-form');
+        if (contactForm) {
+          contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Message transmitted! (This is a demo - in a real portfolio, this would connect to a backend)');
+            contactForm.reset();
+          });
+        }
+      }
+
+      setupHoverEffects() {
+        const faces = document.querySelectorAll('.cube-face');
+        faces.forEach(face => {
+          face.addEventListener('mouseenter', () => {
+            gsap.to(face, { 
+              scale: 1.02, 
+              duration: 0.3,
+              ease: "back.out(1.7)"
+            });
+          });
+          face.addEventListener('mouseleave', () => {
+            gsap.to(face, { 
+              scale: 1, 
+              duration: 0.3,
+              ease: "power2.out"
+            });
+          });
+        });
+
+        // Smooth arrow hover effects
+        const arrows = document.querySelectorAll('.nav-arrow');
+        arrows.forEach(arrow => {
+          arrow.addEventListener('mouseenter', () => {
+            gsap.to(arrow, {
+              scale: 1.1,
+              duration: 0.2,
+              ease: "power2.out"
+            });
+          });
+          arrow.addEventListener('mouseleave', () => {
+            gsap.to(arrow, {
+              scale: 1,
+              duration: 0.2,
+              ease: "power2.out"
+            });
+          });
+        });
+      }
+
+      rotateCube(angle) {
+        if (this.isRotating) return;
+        this.isRotating = true;
+        
+        const faces = ['name', 'about', 'skills', 'projects', 'experience', 'contact'];
+        const currentIndex = faces.indexOf(this.currentFace);
+        const newIndex = (currentIndex + (angle > 0 ? -1 : 1) + faces.length) % faces.length;
+        this.currentFace = faces[newIndex];
+        
+        this.animateRotation(angle);
+      }
+
+      rotateToFace(faceName) {
+        if (this.isRotating || this.currentFace === faceName) return;
+        this.isRotating = true;
+        
+        const faces = ['name', 'about', 'skills', 'projects', 'experience', 'contact'];
+        const currentIndex = faces.indexOf(this.currentFace);
+        const targetIndex = faces.indexOf(faceName);
+        const angleDiff = (targetIndex - currentIndex) * -60;
+        
+        this.currentRotation += angleDiff;
+        this.currentFace = faceName;
+        this.animateRotation(angleDiff);
+      }
+
+      animateRotation(angle) {
+        // Calculate the new rotation
+        this.currentRotation += angle;
+        
+        // Set rotating to false immediately so next click can happen
+        this.isRotating = true;
+        
+        // Use a faster, more responsive animation
+        gsap.to(this.mainCube, {
+          rotateY: this.currentRotation,
+          duration: 0.8, // Faster duration
+          ease: "power2.inOut",
+          onComplete: () => {
+            this.isRotating = false;
+            this.updateHeaderNavigation(); // Update header after rotation
+          }
+        });
+
+        // Quick arrow pulse (non-blocking)
+        const arrowDirection = angle > 0 ? '.nav-arrow-left' : '.nav-arrow-right';
+        const arrow = document.querySelector(arrowDirection);
+        if (arrow) {
+          gsap.fromTo(arrow,
+            {
+              scale: 1.2
+            },
+            {
+              scale: 1,
+              duration: 0.3,
+              ease: "power2.out"
+            }
+          );
+        }
+
+        // Quick face glow (non-blocking)
+        const activeFace = document.querySelector(`[data-face="${this.currentFace}"]`);
+        if (activeFace) {
+          gsap.fromTo(activeFace, 
+            {
+              boxShadow: "0 0 30px rgba(0, 255, 65, 0.4)"
+            },
+            {
+              boxShadow: "0 0 50px rgba(0, 255, 65, 0.3)",
+              duration: 0.4,
+              ease: "power2.out"
+            }
+          );
+        }
+
+        // Add a subtle pulse effect to the header when rotating
+        const header = document.querySelector('.cyber-header');
+        if (header) {
+          gsap.fromTo(header,
+            {
+              boxShadow: "0 0 40px rgba(0, 255, 65, 0.5)"
+            },
+            {
+              boxShadow: "0 0 30px rgba(0, 255, 65, 0.3)",
+              duration: 0.5,
+              ease: "power2.out"
+            }
+          );
+        }
       }
     }
+
+    // Initialize the portfolio when DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      window.portfolio = new CyberCubePortfolio();
+    });
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      if (window.portfolio) {
+        window.portfolio.updateHeaderNavigation();
+      }
+    });
   </script>
-  <script type="module" src="app.js"></script>
 </body>
 </html>
